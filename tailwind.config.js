@@ -6,3 +6,15 @@ export default {
   },
   plugins: [],
 };
+
+// module.exports = {
+//   content: [
+//     "./src/**/*.html",
+//     "./src/**/*.js",
+//     // Add other file types as needed
+//   ],
+//   theme: {
+//     extend: {},
+//   },
+//   plugins: [],
+// };
