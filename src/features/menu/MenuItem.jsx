@@ -1,12 +1,25 @@
 import { formatCurrency } from "../../utils/helpers";
 import Button from "../../ui/Button";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addItem } from "../cart/cartSlice";
 
 function MenuItem({ pizza }) {
-  const [addToCart, setAddToCart] = useState();
   const [pizzaNum, setPizzaNum] = useState(1);
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
+  const dispatch = useDispatch();
 
+  function handleAddToCart() {
+    const newItem = {
+      pizzaId: id,
+      name,
+      quntaty: 1,
+      unitPrice,
+      totalPrice: unitPrice * 1,
+    };
+
+    dispatch(addItem(newItem));
+  }
   return (
     <li className="w flex  gap-4 py-2">
       <img
@@ -28,22 +41,11 @@ function MenuItem({ pizza }) {
             </p>
           )}
 
-          {addToCart && (
-            <div className="flex items-center gap-3 ">
-              <label className="">Number</label>
-              <input
-                type="number"
-                className="w-20 rounded-full border-yellow-500 px-3 py-2 outline-none  focus:ring focus:ring-yellow-500"
-                min="1"
-                value={pizzaNum}
-                onChange={setPizzaNum}
-              />
-            </div>
+          {!soldOut && (
+            <Button type="small" onClick={handleAddToCart}>
+              Add to cart
+            </Button>
           )}
-
-          <Button type="small" onClick={setAddToCart} addToCart={addToCart}>
-            Add to cart
-          </Button>
         </div>
       </div>
     </li>
