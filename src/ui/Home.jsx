@@ -1,6 +1,13 @@
+import { useSelector } from "react-redux";
 import CreateUser from "../features/user/CreateUser";
+import Button from "./Button";
+import { useNavigation } from "react-router-dom";
 
 function Home() {
+  const username = useSelector((state) => state.user.username);
+  const navigationState = useNavigation();
+  console.log(navigationState);
+  console.log(username);
   return (
     <div className="sm:my  my-10 px-4 text-center sm:my-16">
       <h1 className="mb-8  text-xl font-semibold md:text-3xl">
@@ -10,8 +17,14 @@ function Home() {
           Straight out of the oven, straight to you.
         </span>
       </h1>
-
-      <CreateUser />
+      {username === "" && <CreateUser />}
+      {navigationState.state !== "loading" && username !== "" ? (
+        <Button type="primary" to="/menu">
+          Continue ordering, {username}
+        </Button>
+      ) : (
+        ""
+      )}
     </div>
   );
 }

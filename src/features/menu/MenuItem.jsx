@@ -1,7 +1,10 @@
 import { formatCurrency } from "../../utils/helpers";
 import Button from "../../ui/Button";
+import { useState } from "react";
 
 function MenuItem({ pizza }) {
+  const [addToCart, setAddToCart] = useState();
+  const [pizzaNum, setPizzaNum] = useState(1);
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
 
   return (
@@ -25,7 +28,22 @@ function MenuItem({ pizza }) {
             </p>
           )}
 
-          <Button type="small">Add to cart</Button>
+          {addToCart && (
+            <div className="flex items-center gap-3 ">
+              <label className="">Number</label>
+              <input
+                type="number"
+                className="w-20 rounded-full border-yellow-500 px-3 py-2 outline-none  focus:ring focus:ring-yellow-500"
+                min="1"
+                value={pizzaNum}
+                onChange={setPizzaNum}
+              />
+            </div>
+          )}
+
+          <Button type="small" onClick={setAddToCart} addToCart={addToCart}>
+            Add to cart
+          </Button>
         </div>
       </div>
     </li>
