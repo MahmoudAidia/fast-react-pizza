@@ -9,7 +9,7 @@ const isValidPhone = (str) =>
   );
 
 const inputStyle =
-  "md:6px w-full rounded-full border border-stone-200 px-4 py-2 text-sm transition-all duration-300 focus:outline-none  focus:ring focus:ring-yellow-400 md:px-3";
+  "md:6px rounded-full border border-stone-200 px-4 py-2 text-sm transition-all duration-300 focus:outline-none  focus:ring focus:ring-yellow-400 md:px-3";
 
 const fakeCart = [
   {
@@ -45,31 +45,50 @@ function CreateOrder() {
   const cart = fakeCart;
 
   return (
-    <div>
-      <h2>Ready to order? Let's go!</h2>
+    <div className="px-4 py-6">
+      <h2 className="mb-8 text-xl font-semibold">Ready to order? Let's go!</h2>
 
       <Form method="POST">
-        <div>
-          <label>First Name</label>
-          <input className={inputStyle} type="text" name="customer" required />
+        <div className="mb-5 flex flex-col  gap-2 sm:flex-row sm:items-center">
+          <label className="sm:basis-40">First Name</label>
+          <input
+            className={`${inputStyle} grow`}
+            type="text"
+            name="customer"
+            required
+          />
         </div>
 
-        <div>
-          <label>Phone number</label>
-          <div>
-            <input type="tel" name="phone" required className={inputStyle} />
+        <div className="mb-5 flex flex-col  gap-2 sm:flex-row sm:items-center">
+          <label className="sm:basis-40">Phone number</label>
+          <div className="grow">
+            <input
+              type="tel"
+              name="phone"
+              required
+              className={`${inputStyle} w-full`}
+            />
+            {formErrors?.phone && (
+              <p className="text-red-7 mt-2 rounded-md bg-red-100 p-2 text-sm">
+                {formErrors.phone}
+              </p>
+            )}
           </div>
-          {formErrors?.phone && <p>{formErrors.phone}</p>}
         </div>
 
-        <div>
-          <label>Address</label>
-          <div>
-            <input className={inputStyle} type="text" name="address" required />
+        <div className="mb-5 flex flex-col  gap-2 sm:flex-row sm:items-center">
+          <label className="sm:basis-40">Address</label>
+          <div className="grow">
+            <input
+              className={`${inputStyle} w-full`}
+              type="text"
+              name="address"
+              required
+            />
           </div>
         </div>
 
-        <div>
+        <div className="mb-12 flex items-center gap-5">
           <input
             className="h-6 w-6 accent-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-offset-2"
             type="checkbox"
@@ -78,10 +97,12 @@ function CreateOrder() {
             // value={withPriority}
             // onChange={(e) => setWithPriority(e.target.checked)}
           />
-          <label htmlFor="priority">Want to yo give your order priority?</label>
+          <label htmlFor="priority" className="font-medium">
+            Want to yo give your order priority?
+          </label>
         </div>
 
-        <div>
+        <div className="mb-5 flex flex-col  gap-2 sm:flex-row sm:items-center">
           <input type="hidden" value={JSON.stringify(cart)} name="cart" />
           <Button disabled={isSubmitting} type="primary">
             {isSubmitting ? "Placing order..." : "Order now"}
