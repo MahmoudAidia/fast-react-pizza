@@ -66,6 +66,9 @@ function getUser(state) {
   return state.user.username;
 }
 
+const getCurrentQuantityById = (id) => (state) =>
+  state.cart.cart.find((item) => item.pizzaId === id)?.quantity ?? 0;
+
 export const {
   addItem,
   deleteItem,
@@ -74,5 +77,11 @@ export const {
   clearCart,
 } = cartSlice.actions;
 
-export { getTotalCartQuantity, getTotalCartPrice, getCartItems, getUser };
+export {
+  getTotalCartQuantity,
+  getTotalCartPrice,
+  getCartItems,
+  getUser,
+  getCurrentQuantityById,
+};
 export default cartSlice.reducer;
