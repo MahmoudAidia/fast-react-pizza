@@ -58,6 +58,14 @@ function getTotalCartPrice(state) {
   }, 0);
 }
 
+function getCartItems(state) {
+  return state.cart.cart;
+}
+
+function getUser(state) {
+  return state.user.username;
+}
+
 export const {
   addItem,
   deleteItem,
@@ -66,5 +74,5 @@ export const {
   clearCart,
 } = cartSlice.actions;
 
-export { getTotalCartQuantity, getTotalCartPrice };
+export { getTotalCartQuantity, getTotalCartPrice, getCartItems, getUser };
 export default cartSlice.reducer;

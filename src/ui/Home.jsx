@@ -6,8 +6,6 @@ import { useNavigation } from "react-router-dom";
 function Home() {
   const username = useSelector((state) => state.user.username);
   const navigationState = useNavigation();
-  console.log(navigationState);
-  console.log(username);
   return (
     <div className="sm:my  my-10 px-4 text-center sm:my-16">
       <h1 className="mb-8  text-xl font-semibold md:text-3xl">
