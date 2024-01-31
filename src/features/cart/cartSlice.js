@@ -35,6 +35,16 @@ const cartSlice = createSlice({
       const item = state.cart.find((item) => item.pizzaId === action.payload);
       item.quantity--;
       item.totalPrice = item.quantity * item.unitPrice;
+      if (item.quantity === 0) {
+        // Here I have to options to delete the item
+        // (1) To copy the logic from deleteItem reducer
+        // state.cart = state.cart.filter(
+        //   (item) => item.pizzaId !== action.payload,
+        // );
+
+        // (2) To use this feature from Redux to access a reducer
+        cartSlice.caseReducers.deleteItem(state, action);
+      }
     },
     clearCart(state) {
       state.cart = [];
