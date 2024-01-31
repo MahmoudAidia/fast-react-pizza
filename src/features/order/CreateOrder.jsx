@@ -1,8 +1,12 @@
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import { createOrder } from "../../services/apiRestaurant";
 import Button from "../../ui/Button";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { clearCart, getCartItems, getTotalCartPrice } from "../cart/cartSlice";
+import EmptyCart from "../cart/EmptyCart";
+import store from "../../Store";
+import { formatCurrency } from "../../utils/helpers";
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
@@ -12,39 +16,35 @@ const isValidPhone = (str) =>
 const inputStyle =
   "md:6px rounded-full border border-stone-200 px-4 py-2 text-sm transition-all duration-300 focus:outline-none  focus:ring focus:ring-yellow-400 md:px-3";
 
-const fakeCart = [
-  {
-    pizzaId: 12,
-    name: "Mediterranean",
-    quantity: 2,
-    unitPrice: 16,
-    totalPrice: 32,
-  },
-  {
-    pizzaId: 6,
-    name: "Vegetale",
-    quantity: 1,
-    unitPrice: 13,
-    totalPrice: 13,
-  },
-  {
-    pizzaId: 11,
-    name: "Spinach and Mushroom",
-    quantity: 1,
-    unitPrice: 15,
-    totalPrice: 15,
-  },
-];
-
 function CreateOrder() {
+  // Listening to form inputs
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [withPriority, setWithPriority] = useState(false);
+
+  // Gettin user name to displayed in the name input field as a default value
   const username = useSelector((state) => state.user.username);
+
+  // Manipulate order now button
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
+  const dispatch = useDispatch();
+  if (isSubmitting) {
+    dispatch(clearCart);
+  }
   const formErrors = useActionData();
 
-  // const [withPriority, setWithPriority] = useState(false);
-  const cart = fakeCart;
+  // Cart data to be submitted
+  const cart = useSelector(getCartItems);
+  const totalCartPrice = useSelector(getTotalCartPrice);
+  const priorityPrice = withPriority ? totalCartPrice * 0.2 : 0;
+
+  const totalPrice = totalCartPrice + priorityPrice;
+
+  if (!cart.length) {
+    return <EmptyCart />;
+  }
 
   return (
     <div className="px-4 py-6">
@@ -70,6 +70,8 @@ function CreateOrder() {
               name="phone"
               required
               className={`${inputStyle} w-full`}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              value={phoneNumber}
             />
             {formErrors?.phone && (
               <p className="text-red-7 mt-2 rounded-md bg-red-100 p-2 text-sm">
@@ -87,6 +89,8 @@ function CreateOrder() {
               type="text"
               name="address"
               required
+              onChange={(e) => setAddress(e.target.value)}
+              value={address}
             />
           </div>
         </div>
@@ -97,8 +101,8 @@ function CreateOrder() {
             type="checkbox"
             name="priority"
             id="priority"
-            // value={withPriority}
-            // onChange={(e) => setWithPriority(e.target.checked)}
+            value={withPriority}
+            onChange={(e) => setWithPriority(e.target.checked)}
           />
           <label htmlFor="priority" className="font-medium">
             Want to yo give your order priority?
@@ -108,7 +112,9 @@ function CreateOrder() {
         <div className="mb-5 flex flex-col  gap-2 sm:flex-row sm:items-center">
           <input type="hidden" value={JSON.stringify(cart)} name="cart" />
           <Button disabled={isSubmitting} type="primary">
-            {isSubmitting ? "Placing order..." : "Order now"}
+            {isSubmitting
+              ? "Placing order..."
+              : `Order now for ${formatCurrency(totalPrice)}`}
           </Button>
         </div>
       </Form>
@@ -116,16 +122,17 @@ function CreateOrder() {
   );
 }
 
+// This the action created by react-router actions
 export async function action({ request }) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
-  console.log(data);
+
   const order = {
     ...data,
     cart: JSON.parse(data.cart),
-    priority: data.priority === "on",
+    priority: data.priority === "true",
   };
-  console.log(order);
+
   const errors = {};
   if (!isValidPhone(order.phone)) {
     errors.phone =
@@ -138,7 +145,34 @@ export async function action({ request }) {
 
   const newOrder = await createOrder(order);
 
+  // These hacky approach reduces Redux performance optimization.
+  store.dispatch(clearCart());
+
   return redirect(`/order/${newOrder.id}`);
 }
 
 export default CreateOrder;
+
+// const fakeCart = [
+//   {
+//     pizzaId: 12,
+//     name: "Mediterranean",
+//     quantity: 2,
+//     unitPrice: 16,
+//     totalPrice: 32,
+//   },
+//   {
+//     pizzaId: 6,
+//     name: "Vegetale",
+//     quantity: 1,
+//     unitPrice: 13,
+//     totalPrice: 13,
+//   },
+//   {
+//     pizzaId: 11,
+//     name: "Spinach and Mushroom",
+//     quantity: 1,
+//     unitPrice: 15,
+//     totalPrice: 15,
+//   },
+// ];
