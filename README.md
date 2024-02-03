@@ -8,6 +8,9 @@ A simple application, where users can order one or more pizzas from a menu.
     - Install all the dependencies :
       - $ npm install
 
+## Live Demo
+- https://app.netlify.com/sites/warm-ganache-1a5df0/deploys/65be2dc92332c085e304b867
+
 
 ## About the project and its Features
 - The app requires no user accounts and no login. Users just input their names before using the app.
